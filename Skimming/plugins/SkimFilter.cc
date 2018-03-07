@@ -242,8 +242,10 @@ SkimFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 bool SkimFilter::CheckJetCollection(uint jetCollectionIdx, const std::vector< std::vector< flashgg::Jet> >* jets, const flashgg::DiPhotonCandidate& diphoton){
 
-    if (jets->size() - 1 > jetCollectionIdx)
+    if (jetCollectionIdx > jets->size() - 1){
+        if(verbose_) std::cout << "SHOULDN'T GET HERE" << std::endl;
         return false;
+    }
 
     uint njet = jets->at(jetCollectionIdx).size();
     int nGoodJet = 0;
