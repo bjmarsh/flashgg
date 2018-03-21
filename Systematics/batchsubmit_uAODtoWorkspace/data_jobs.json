@@ -1,0 +1,34 @@
+{
+    "processes": {
+        "Data": [ 
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016C-03Feb2017-v1",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016D-03Feb2017-v1",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016E-03Feb2017-v1",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016F-03Feb2017-v1",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016G-03Feb2017-v1",
+                "filesPerOutput": 25
+            },
+            {
+                "ds" : "/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1",
+                "filesPerOutput": 25
+            }
+        ]            
+    }
+}

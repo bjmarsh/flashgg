@@ -1,0 +1,46 @@
+{
+    "processes" : {
+        "tth_125": [
+            {
+                "ds": "/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_v2/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-BS2016_BSandPUSummer16_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_120": [
+            {
+                "ds": "/ttHJetToGG_M120_13TeV_amcatnloFXFX_madspin_pythia8_v2/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_130": [
+            {
+                "ds": "/ttHJetToGG_M130_13TeV_amcatnloFXFX_madspin_pythia8_v2/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_123": [
+            {
+                "ds": "/ttHJetToGG_M123_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_124": [
+            {
+                "ds": "/ttHJetToGG_M124_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_126": [
+            {
+                "ds": "/ttHJetToGG_M126_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ],
+        "tth_127": [
+            {
+                "ds": "/ttHJetToGG_M127_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16-2_4_1-25ns_Moriond17-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1",
+                "filesPerOutput": 1
+            }
+        ]
+    }
+}
