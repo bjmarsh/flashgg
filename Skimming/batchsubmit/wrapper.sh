@@ -48,6 +48,11 @@ echo "*****************************************************"
 
 echo "[wrapper `date +\"%Y%m%d %k:%M:%S\"`] running: cmsRun -n4 temp_cfg.py"
 cmsRun -n4 temp_cfg.py
+RETVAL=$?
+if [ $RETVAL -ne 0 ]; then
+    echo "CMSSWERROR!! cmsRun crashed with an error. Deleting output file."
+    rm test_skim.root
+fi
 
 if [ -f test_skim.root ]; then
     SIZE=`stat --printf="%s\n" test_skim.root`

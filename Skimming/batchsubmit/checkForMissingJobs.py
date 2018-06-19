@@ -25,6 +25,7 @@ for job in jobs:
     if args.startswith("#"):
         continue
     if not args.startswith("arguments"):
+        print job
         raise Exception(args)
     args = args.split("=")[1].split()
     if not os.path.exists(args[2]):

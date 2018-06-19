@@ -149,7 +149,7 @@ SkimFilter::~SkimFilter()
 bool
 SkimFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-    
+
     edm::Handle< std::vector< std::vector< flashgg::Jet> > > jets_h;
     iEvent.getByToken(jetToken_, jets_h);
     const std::vector< std::vector< flashgg::Jet> >* jets = jets_h.product();

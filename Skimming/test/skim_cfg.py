@@ -22,6 +22,7 @@ else:
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring("PUTFILENAMEHERE")
                             # fileNames = cms.untracked.vstring("file:../myMicroAODOutputFile_99.root")
+                            # fileNames = cms.untracked.vstring("/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1741.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1742.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1743.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1744.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1745.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1746.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1747.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1748.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1749.root","/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/170310_111930/0001/myMicroAODOutputFile_1750.root")
 )
 
 print process.source.fileNames
@@ -57,7 +58,7 @@ process.skimFilter = cms.EDFilter("SkimFilter",
                                   diphotonLeadPtOverMassCut = cms.double(0.0),
                                   diphotonSubLeadPtOverMassCut = cms.double(0.0),
 
-                                  jetPtThresh = cms.double(25.0),
+                                  jetPtThresh = cms.double(20.0),
                                   jetEtaThresh = cms.double(2.4),
                                   btagDiscThresh = cms.double(bDiscriminator80XReReco[0]), # loose
                                   nJetCut = cms.int32(2),
@@ -78,6 +79,7 @@ process.p = cms.Path(process.flashggUpdatedIdMVADiPhotons *
 
 process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string("test_skim.root"),
+                               # fileName = cms.untracked.string("file:/hadoop/cms/store/user/bemarsh/flashgg/MicroAOD_skim/2016_skim_v3_jetPt20/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016H-03Feb2017_ver2-v1/microAOD_175.root"),
                                outputCommands = cms.untracked.vstring("keep *","drop *_flashggDiPhotonMVA_*_*","drop *_flashggUpdatedIdMVADiPhotons_*_*","drop *_flashggPreselectedDiPhotons_*_*",),
                                SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring("p") )
 )

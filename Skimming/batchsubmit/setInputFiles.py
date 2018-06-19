@@ -6,7 +6,7 @@ text = open("Skimming/test/skim_cfg.py").read()
 text = text.replace('"PUTFILENAMEHERE"',infiles)
 
 if "mcRun2" in infiles:
-    text.replace("isMC = False","isMC = True")
+    text = text.replace("isMC = False","isMC = True")
 
 fid = open("temp_cfg.py",'w')
 fid.write(text)
