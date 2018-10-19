@@ -14,6 +14,18 @@
                 "/DoubleEG/Run2016H-03Feb2017_ver3-v1/MINIAOD"
                 ]
             },
+        "sig_thq": {
+            "filesPerOutput": 1,
+            "datasets": [
+                "/THQ_HToGG_13TeV-madgraph-pythia8_TuneCUETP8M1/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
+                ]
+            },
+        "sig_thw": {
+            "filesPerOutput": 1,
+            "datasets": [
+                "/THW_HToGG_13TeV-madgraph-pythia8_TuneCUETP8M1/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
+                ]
+            },
         "sig_tth": {
             "filesPerOutput": 1,
             "datasets": [
@@ -44,7 +56,7 @@
                 "/ttHJetToGG_M95_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
                 ]
             },
-        "bkg_ttgg": {
+        "bkg": {
             "filesPerOutput": 1,
             "datasets": [
                 "/TTGG_0Jets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"

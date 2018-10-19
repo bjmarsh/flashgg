@@ -1,0 +1,24 @@
+{
+    "processes": {
+        "data": {
+            "filesPerOutput": 1,
+            "datasets": [
+                ]
+            },
+        "sig_tth": {
+            "filesPerOutput": 1,
+            "datasets": [
+                ]
+            },
+        "bkg": {
+            "filesPerOutput": 1,
+            "datasets": [
+                "/GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/RunIISummer18MiniAOD-101X_upgrade2018_realistic_v7-v1/MINIAODSIM",
+                "/GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8/RunIISummer18MiniAOD-101X_upgrade2018_realistic_v7-v1/MINIAODSIM",
+                "/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/RunIISummer18MiniAOD-101X_upgrade2018_realistic_v7-v1/MINIAODSIM",
+                "/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISpring18MiniAOD-100X_upgrade2018_realistic_v10_ext1-v1/MINIAODSIM",
+                "/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISpring18MiniAOD-HEMPremix_100X_upgrade2018_realistic_v10-v3/MINIAODSIM"
+                ]
+            }
+        }
+    }
