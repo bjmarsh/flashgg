@@ -8,10 +8,10 @@ from metis.Sample import DBSSample
 from metis.CondorTask import CondorTask
 from metis.StatsParser import StatsParser
 
-job_tag = "test"
+job_tag = "2016_topTag_overlapRemoval"
 exec_path = "condor_exe.sh"
 tar_path = "package.tar.xz"
-hadoop_path = "flashgg/MicroAOD/test"
+hadoop_path = "flashgg/MicroAOD/{0}".format(job_tag)
 
 DOSKIM = True
 
@@ -25,6 +25,8 @@ job_jsons = ["datasets_RunIISummer16.json"]
 for js in job_jsons:
     jobs = json.load(open(js))
     for pid in jobs["processes"]:
+        # if pid != "bkg":
+            # continue
         fpo = jobs["processes"][pid]["filesPerOutput"]
         for ds in jobs["processes"][pid]["datasets"]:
             args = getArgs(pid, ds)                
@@ -52,12 +54,12 @@ while True:
         # save some information for the dashboard
         total_summary[ds] = task.get_task_summary()
     # parse the total summary and write out the dashboard
-    StatsParser(data=total_summary, webdir="~/public_html/dump/metis/").do()
-    os.system("chmod -R 755 ~/public_html/dump/metis")
+    StatsParser(data=total_summary, webdir="~/public_html/dump/metis_microaod_80x/").do()
+    os.system("chmod -R 755 ~/public_html/dump/metis_microaod_80x")
     if allcomplete:
         print ""
         print "Job={} finished".format(job_tag)
         print ""
         break
-    print "Sleeping 300 seconds ..."
-    time.sleep(300)
+    print "Sleeping 1800 seconds ..."
+    time.sleep(1800)
