@@ -23,19 +23,22 @@ if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
 elif os.environ["CMSSW_VERSION"].count("CMSSW_9_2") or os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
 #    process.GlobalTag = GlobalTag(process.GlobalTag,'92X_dataRun2_Prompt_v4','')
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/data/Run2017A/DoubleEG/MINIAOD/PromptReco-v2/000/296/173/00000/C24ABCFB-644C-E711-8A5E-02163E01A21C.root"))
-#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("root://eoscms.cern.ch//eos/cms/store/data/Run2017E/DoubleEG/MINIAOD/PromptReco-v1/000/304/292/00000/EADA159D-E4AA-E711-9B06-02163E01A656.root")) # bugged
+#     process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("root://eoscms.cern.ch//eos/cms/store/data/Run2017D/DoubleEG/MINIAOD/17Nov2017-v1/710000/00B41065-D1D9-E711-87DF-D4AE526A0B47.root")) # bugged
 #    process.GlobalTag = GlobalTag(process.GlobalTag,'92X_upgrade2017_TSG_For90XSamples_V2','')
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/mc/PhaseIFall16MiniAOD/GluGluHToGG_M-125_13TeV_powheg_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_PhaseIFall16_90X_upgrade2017_realistic_v6_C1-v1/00000/069F58F4-0E20-E711-AB3B-00259048A8F4.root"))
 
-    process.GlobalTag = GlobalTag(process.GlobalTag,'94X_mc2017_realistic_v10','')
+     
+#    process.GlobalTag = GlobalTag(process.GlobalTag,'94X_mc2017_realistic_v14','')
+    process.GlobalTag = GlobalTag(process.GlobalTag,'92X_dataRun2_Prompt_v11','')
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv2/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUgenV6_pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/10000/2C7F3153-393B-E611-9323-0CC47AA98A3A.root'))
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/GluGluHToGG_M-125_13TeV_powheg_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/60000/024E4FA3-8BBC-E611-8E3D-00266CFFBE88.root'))
     #process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/40000/4A2ACB0A-1BD9-E711-AF54-141877410316.root'))
-    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/2E0E165D-8E05-E811-909C-FA163E80AE1F.root'))
-
-
-#    process.GlobalTag = GlobalTag(process.GlobalTag,'92X_upgrade2017_TSG_For90XSamples_V2','')
-#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/mc/PhaseIFall16MiniAOD/GluGluHToGG_M-70_13TeV_powheg_pythia8/MINIAODSIM/FlatPU28to62HcalNZSRAW_PhaseIFall16_HIG067_90X_upgrade2017_realistic_v6_C1-v1/50000/34873FEE-9B96-E711-BC58-0090FAA57960.root"))
+#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/2E0E165D-8E05-E811-909C-FA163E80AE1F.root'))
+#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('file:/afs/cern.ch/user/s/sethzenz/work/public/GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_94X_mc2017_realistic_v10-v1.root'))
+#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/mc/RunIIFall17MiniAODv2/THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/90000/6E58A5DD-BF43-E811-8946-0023AEEEB538.root"))
+#    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/mc/RunIIFall17MiniAODv2/GluGluHToGG_M-125_13TeV_powheg_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/0866D1A8-1941-E811-B61F-0CC47AF9B2E6.root"))
+    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/data/Run2017F/DoubleEG/MINIAOD/PromptReco-v1/000/305/040/00000/2E5E7E62-29B2-E711-9E47-02163E019D16.root"))
+     
 else:
     raise Exception,"The default setup for microAODstd.py does not support releases other than 80X, 92X (being deprecated), and 94X"
 
@@ -48,7 +51,6 @@ process.RandomNumberGeneratorService.flashggRandomizedPhotons = cms.PSet(
 #process.source.fileNames=cms.untracked.vstring("/store/mc/RunIISummer17MiniAOD/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10_ext1-v2/10000/00F9D855-E293-E711-B625-02163E014200.root")
 
 # 2017 Data
-#process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/data/Run2017A/DoubleEG/MINIAOD/PromptReco-v2/000/296/173/00000/C24ABCFB-644C-E711-8A5E-02163E01A21C.root"))
 
 # Legacy ReReco
 #process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/data/Run2016B/SingleElectron/MINIAOD/18Apr2017_ver1-v1/120000/40167FB6-6237-E711-934A-001E67E69E05.root"))
@@ -104,7 +106,6 @@ process.flag_globalTightHalo2016Filter = cms.Path(process.globalTightHalo2016Fil
 process.flag_BadChargedCandidateFilter = cms.Path(process.BadChargedCandidateFilter)
 process.flag_BadPFMuonFilter = cms.Path(process.BadPFMuonFilter)
 
-
 process.p = cms.Path(process.flashggMicroAODSequence)
 process.e = cms.EndPath(process.out)
 
@@ -122,7 +123,9 @@ process.e = cms.EndPath(process.out)
 from flashgg.MicroAOD.MicroAODCustomize import customize
 customize(process)
 
+
+
 if "DY" in customize.datasetName or "SingleElectron" in customize.datasetName or "DoubleEG" in customize.datasetName:
   customize.customizeHLT(process)
 
-open('dump.py', 'w').write(process.dumpPython())
+#open('dump.py', 'w').write(process.dumpPython())

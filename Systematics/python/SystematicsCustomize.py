@@ -17,6 +17,17 @@ def printSystematicInfo(process):
     vpsetlist +=[process.flashggMetSystematics.SystMethods]
     printSystematicVPSet(vpsetlist2D)
 
+def turnOnAllSystematicsDebug(process):
+    vpsetlist = [process.flashggDiPhotonSystematics.SystMethods, process.flashggMuonSystematics.SystMethods, process.flashggElectronSystematics.SystMethods]
+    vpsetlist += [process.flashggJetSystematics0.SystMethods]
+    vpsetlist += [process.flashggDiPhotonSystematics.SystMethods2D, process.flashggMuonSystematics.SystMethods2D, process.flashggElectronSystematics.SystMethods2D]
+    vpsetlist += [process.flashggJetSystematics0.SystMethods2D]
+    vpsetlist += [process.flashggMetSystematics.SystMethods]
+    for vpset in vpsetlist:
+        for pset in vpset:
+            pset.Debug = True
+
+
 def printSystematicVPSet(vpsetlist):
     for vpset in vpsetlist:
         for pset in vpset:
@@ -52,12 +63,15 @@ def printSystematicVPSet(vpsetlist):
             print 57*"-"
 
 
-def createStandardSystematicsProducers(process):
+def createStandardSystematicsProducers(process, MUON_ID="Loose" , MUON_ISO="LooseRel"):
     process.load("flashgg/Taggers/flashggTagSequence_cfi")
     process.load("flashgg.Systematics.flashggDiPhotonSystematics_cfi")
     process.load("flashgg.Systematics.flashggMuonSystematics_cfi")
     process.load("flashgg.Systematics.flashggElectronSystematics_cfi")
     process.load("flashgg.Systematics.flashggMetSystematics_cfi")
+
+    import flashgg.Systematics.flashggMuonSystematics_cfi as muon_sf
+    muon_sf.SetupMuonScaleFactors( process , MUON_ID , MUON_ISO )
     
     from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
     from flashgg.Systematics.flashggJetSystematics_cfi import createJetSystematics
@@ -71,7 +85,7 @@ def modifyTagSequenceForSystematics(process,jetSystematicsInputTags,ZPlusJetMode
     massSearchReplaceAnyInputTag(process.flashggTagSequence,cms.InputTag("flashggUpdatedIdMVADiPhotons"),cms.InputTag("flashggDiPhotonSystematics"))
     massSearchReplaceAnyInputTag(process.flashggTagSequence,cms.InputTag("flashggSelectedElectrons"),cms.InputTag("flashggElectronSystematics"))
     massSearchReplaceAnyInputTag(process.flashggTagSequence,cms.InputTag("flashggSelectedMuons"),cms.InputTag("flashggMuonSystematics"))
-    massSearchReplaceAnyInputTag(process.flashggTagSequence,cms.InputTag("flashggMets"),cms.InputTag("flashggMetSystematics"))
+    massSearchReplaceAnyInputTag(process.flashggTagSequence,cms.InputTag("flashggMetsCorr"),cms.InputTag("flashggMetSystematics"))
     from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
     for i in range(len(jetSystematicsInputTags)):
         massSearchReplaceAnyInputTag(process.flashggTagSequence,UnpackedJetCollectionVInputTag[i],jetSystematicsInputTags[i])
@@ -203,11 +217,15 @@ def customizeJetSystematicsForData(process):
         process.load("JetMETCorrections/Configuration/JetCorrectionServices_cff")
     process.jetCorrectorChain = cms.Sequence(process.ak4PFCHSL1FastL2L3ResidualCorrectorChain)
 
-    #hopefully a temporary hack
-    from os import environ
-    process.jec.connect = cms.string('sqlite_file:%s/src/flashgg/Systematics/data/JEC/Summer16_23Sep2016AllV4_DATA.db' % environ['CMSSW_BASE'])
-    process.jec.toGet[0].tag = cms.string('JetCorrectorParametersCollection_Summer16_23Sep2016AllV4_DATA_AK4PFchs')
+    #hopefully a temporary hack (2016 data)
+#    from os import environ
+#    process.jec.connect = cms.string('sqlite_file:%s/src/flashgg/Systematics/data/JEC/Summer16_23Sep2016AllV4_DATA.db' % environ['CMSSW_BASE'])
+#    process.jec.toGet[0].tag = cms.string('JetCorrectorParametersCollection_Summer16_23Sep2016AllV4_DATA_AK4PFchs')
 
+     # Update this hack for 2017 data
+    from os import environ
+    process.jec.connect = cms.string('sqlite_file:%s/src/flashgg/Systematics/data/JEC/Fall17_17Nov2017BCDEF_V6_DATA.db' % environ['CMSSW_BASE'])
+    process.jec.toGet[0].tag = cms.string('JetCorrectorParametersCollection_Fall17_17Nov2017BCDEF_V6_DATA_AK4PFchs')
 
 def useEGMTools(process):
     # remove old scales

@@ -1,6 +1,9 @@
-import os
+import os, json
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
+
+from flashggTriggerFilter import getMicroAODHLTFilter
+
 class MicroAODCustomize(object):
 
     def __init__(self,*args,**kwargs):
@@ -67,16 +70,34 @@ class MicroAODCustomize(object):
                                'runDec2016Regression'
                                )
         self.options.register('runSummer16EleID',
-                              1,
+                              0,
                                VarParsing.VarParsing.multiplicity.singleton,
                                VarParsing.VarParsing.varType.int,
                               'runSummer16EleID'
                               )
         self.options.register('runSummer16EGMPhoID',
-                              1,
+                              0,
                                VarParsing.VarParsing.multiplicity.singleton,
                                VarParsing.VarParsing.varType.int,
                               'runSummer16EGMPhoID'
+                              )
+        self.options.register('runFall17EleID',
+                              1,
+                               VarParsing.VarParsing.multiplicity.singleton,
+                               VarParsing.VarParsing.varType.int,
+                              'runFall17EleID'
+                              )
+        self.options.register('runFall17EGMPhoID',
+                              1,
+                               VarParsing.VarParsing.multiplicity.singleton,
+                               VarParsing.VarParsing.varType.int,
+                              'runFall17EGMPhoID'
+                              )
+        self.options.register('addMicroAODHLTFilter',
+                              True,
+                               VarParsing.VarParsing.multiplicity.singleton,
+                               VarParsing.VarParsing.varType.bool,
+                              'addMicroAODHLTFilter'
                               )
 
         self.parsed_ = False
@@ -132,7 +153,7 @@ class MicroAODCustomize(object):
                 self.customizeVBF(process)
             elif "thq" in customize.datasetName.lower() or "thw" in customize.datasetName.lower():
                 self.customizeTH(process)
-            else:
+            elif os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
                 raise Exception,"processType=sig but datasetName does not contain recognized production mechanism - see MicroAODCustomize.py"
         if self.processType == "background" or self.processType == "bkg":
             self.customizeBackground(process)
@@ -168,19 +189,29 @@ class MicroAODCustomize(object):
             self.customizeDec2016Regression(process)
         if self.runSummer16EleID:
             self.customizeSummer16EleID(process)
+        elif self.runFall17EleID:
+            self.customizeFall17EleID(process)
         else:
             self.customizeSpring15EleID(process)
         if self.runSummer16EGMPhoID:
             self.customizeSummer16EGMPhoID(process)
+        else:
+            self.customizeFall17EGMPhoID(process)
+
         if os.environ["CMSSW_VERSION"].count("CMSSW_9_2") or os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
             self.customize92X( process ) # Needs to come after egm
         print "Final customized process:",process.p
             
     # signal specific customization
     def customizeSignal(self,process):
+        print "customizeSignal"
         process.flashggGenPhotonsExtra.defaultType = 1
         from flashgg.MicroAOD.flashggMet_RunCorrectionAndUncertainties_cff import runMETs,setMetCorr
-        runMETs(process,True) #isMC
+        if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
+            era="Summer16_23Sep2016V4_MC"
+        elif os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
+            era="Fall17_17Nov2017_V6_MC"
+        runMETs(process,era) 
         from flashgg.MicroAOD.METcorr_multPhiCorr_80X_sumPt_cfi import multPhiCorr_MC_DY_80X
         if not (os.environ["CMSSW_VERSION"].count("CMSSW_9_2") or os.environ["CMSSW_VERSION"].count("CMSSW_9_4")):
             setMetCorr(process,multPhiCorr_MC_DY_80X)
@@ -203,7 +234,7 @@ class MicroAODCustomize(object):
             process.p *= process.mergedGenParticles
             process.p *= process.myGenerator
             process.p *= process.rivetProducerHTXS
-            process.out.outputCommands.append("keep *_rivetProducerHTXS_*_*")
+            process.out.outputCommands.append('keep *_HTXSRivetProducer_*_*')
 
         if os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
             #raise Exception,"Debugging ongoing for HTXS in CMSSW 9"
@@ -226,9 +257,13 @@ class MicroAODCustomize(object):
             process.p *= process.mergedGenParticles
             process.p *= process.myGenerator
             process.p *= process.rivetProducerHTXS
-            process.out.outputCommands.append('keep *_*_*_runRivetAnalysis')
+            process.out.outputCommands.append('keep *_rivetProducerHTXS_*_*')
+#            process.out.outputCommands.append('keep *_*_*_FLASHggMicroAOD')
+#            process.out.outputCommands.append('drop *_*Jets*_*_*')
+
 
         self.customizePDFs(process)
+        self.customizeHLT(process)
 
     def customizePDFs(self,process):     
         process.load("flashgg/MicroAOD/flashggPDFWeightObject_cfi")
@@ -236,13 +271,16 @@ class MicroAODCustomize(object):
 
     # background specific customization
     def customizeBackground(self,process):
-        if not os.environ["CMSSW_VERSION"].count("CMSSW_9"):
-            from flashgg.MicroAOD.flashggMet_RunCorrectionAndUncertainties_cff import runMETs,setMetCorr
-            runMETs(process,True) #isMC
-            from flashgg.MicroAOD.METcorr_multPhiCorr_80X_sumPt_cfi import multPhiCorr_MC_DY_80X
-            if not os.environ["CMSSW_VERSION"].count("CMSSW_9_2"):
-                setMetCorr(process,multPhiCorr_MC_DY_80X)
-            process.p *=process.flashggMetSequence
+        from flashgg.MicroAOD.flashggMet_RunCorrectionAndUncertainties_cff import runMETs,setMetCorr
+        if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
+            era="Summer16_23Sep2016V4_MC"
+        elif os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
+            era="Fall17_17Nov2017_V6_MC"
+        runMETs(process,era) 
+        from flashgg.MicroAOD.METcorr_multPhiCorr_80X_sumPt_cfi import multPhiCorr_MC_DY_80X
+        if not (os.environ["CMSSW_VERSION"].count("CMSSW_9_2") or os.environ["CMSSW_VERSION"].count("CMSSW_9_4")):
+            setMetCorr(process,multPhiCorr_MC_DY_80X)
+        process.p *=process.flashggMetSequence
         if "sherpa" in self.datasetName:
             process.flashggGenPhotonsExtra.defaultType = 1
             
@@ -252,7 +290,11 @@ class MicroAODCustomize(object):
         ## remove MC-specific modules
         modules = process.flashggMicroAODGenSequence.moduleNames()
         from flashgg.MicroAOD.flashggMet_RunCorrectionAndUncertainties_cff import runMETs,setMetCorr
-        runMETs(process,False) #!isMC
+        if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
+            era="Summer16_23Sep2016AllV4_DATA"
+        elif os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
+            era="Fall17_17Nov2017BCDEF_V6_DATA"
+        runMETs(process,era)
         if "2016G" in customize.datasetName or "2016H" in customize.datasetName:
             from flashgg.MicroAOD.METcorr_multPhiCorr_80X_sumPt_cfi import multPhiCorr_Data_G_80X
             setMetCorr(process,multPhiCorr_Data_G_80X)
@@ -261,7 +303,8 @@ class MicroAODCustomize(object):
             setMetCorr(process,multPhiCorr_Data_B_80X)
         else:
             pass
-        process.p *=process.flashggMetSequence
+
+        process.p *= process.flashggMetSequence
         for pathName in process.paths:
             path = getattr(process,pathName)
             for mod in modules:
@@ -282,8 +325,17 @@ class MicroAODCustomize(object):
             delattr(process,"patJetPartonMatchAK4PFCHSLeg%i"%vtx)
         self.customizeHighMassIsolations(process)
         process.load("flashgg/MicroAOD/flashggDiPhotonFilter_cfi")
-        process.p1 = cms.Path(process.diPhotonFilter) # Do not save events with 0 diphotons
+        process.flashggDiPhotonFilterSequence += process.diPhotonSelector
+        process.flashggDiPhotonFilterSequence += process.diPhotonFilter # Do not continue running events with 0 diphotons passing pt cuts
+        process.p1 = cms.Path(process.diPhotonFilter) # Do not save events with 0 diphotons passing pt cuts
         process.out.SelectEvents = cms.untracked.PSet(SelectEvents=cms.vstring('p1'))
+
+        ###---Add HLT filter as first step of MicroAOD sequence
+        if self.addMicroAODHLTFilter:
+            process.triggerFilterModule = getMicroAODHLTFilter(customize.datasetName)
+            if process.triggerFilterModule:
+                process.p = cms.Path(process.triggerFilterModule*process.p._seq)
+                process.p1 = cms.Path(process.triggerFilterModule*process.p1._seq)
 
     def customizeDec2016Regression(self,process):
         if not (process.GlobalTag.globaltag == "80X_mcRun2_asymptotic_2016_TrancheIV_v7" or process.GlobalTag.globaltag == "80X_dataRun2_2016SeptRepro_v6"):
@@ -325,6 +377,30 @@ class MicroAODCustomize(object):
         process.flashggElectrons.eleMVATightIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80")
         process.flashggElectrons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values")
 
+    def customizeFall17EleID(self,process):
+        from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
+        dataFormat = DataFormat.MiniAOD
+        switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+        my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
+                         'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
+                         'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
+                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
+        for idmod in my_id_modules:
+            setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
+        process.flashggElectrons.effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt")
+        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto")  
+        process.flashggElectrons.eleLooseIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-loose")
+        process.flashggElectrons.eleMediumIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium")
+        process.flashggElectrons.eleTightIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")
+        process.flashggElectrons.eleMVALooseIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wpLoose")
+        process.flashggElectrons.eleMVAMediumIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp90")
+        process.flashggElectrons.eleMVATightIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp80")
+        process.flashggElectrons.eleMVALooseNoIsoIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wpLoose")
+        process.flashggElectrons.eleMVAMediumNoIsoIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp90")
+        process.flashggElectrons.eleMVATightNoIsoIdMap = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp80")
+        process.flashggElectrons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values")
+        process.flashggElectrons.mvaNoIsoValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values")
+
     def customizeSummer16EGMPhoID(self,process):
         from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDPhotonIdProducer,setupAllVIDIdsInModule,setupVIDPhotonSelection
         dataFormat = DataFormat.MiniAOD
@@ -333,9 +409,23 @@ class MicroAODCustomize(object):
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process,idmod,setupVIDPhotonSelection)
 
+    def customizeFall17EGMPhoID(self,process):
+        from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDPhotonIdProducer,setupAllVIDIdsInModule,setupVIDPhotonSelection
+        dataFormat = DataFormat.MiniAOD
+        switchOnVIDPhotonIdProducer(process, DataFormat.MiniAOD)
+        my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.mvaPhotonID_Fall17_94X_V1_cff']
+        for idmod in my_id_modules:
+            setupAllVIDIdsInModule(process,idmod,setupVIDPhotonSelection)
+        process.flashggPhotons.effAreasConfigFile = cms.FileInPath("RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_TrueVtx.txt")
+        process.flashggPhotons.egmMvaValuesMap = cms.InputTag("photonMVAValueMapProducer:PhotonMVAEstimatorRunIIFall17v1Values")
+
+
     def customizeDataMuons(self,process):
         process.diPhotonFilter.src = "flashggSelectedMuons"
         process.diPhotonFilter.minNumber = 2
+        process.flashggDiPhotonFilterSequence.remove(process.diPhotonSelector)
+        process.flashggDiPhotonFilterSequence.remove(process.diPhotonFilter)
+        process.flashggMuonFilterSequence += process.diPhotonFilter
 
     def customizeHighMassIsolations(self,process):
         # for isolation cones
@@ -441,11 +531,31 @@ class MicroAODCustomize(object):
             process.rivetProducerHTXS.ProductionMode = "GGF"
 
     def customizeTH(self,process):
-        process.out.outputCommands.append("keep *_source_*_LHEFile")
+        print "customizeTH"
+        cross_sections=["$CMSSW_BASE/src/flashgg/MetaData/data/cross_sections.json"]
+        cross_sections_ = {}
+        LHESourceName = None
+        for xsecFile in cross_sections:
+            fname = os.path.expanduser( os.path.expandvars(xsecFile) )
+            cross_sections_.update( json.loads( open(fname).read() ) )
+        if customize.datasetName.count("/"):
+            dsName = customize.datasetName.split("/")[1]
+        else:
+            dsName = customize.datasetName
+        if dsName in cross_sections_.keys() :
+            xsec_info = cross_sections_[dsName]
+            if "LHESourceName" in xsec_info.keys() :
+                LHESourceName = str( xsec_info["LHESourceName"] )
+
+        if LHESourceName :
+            print "the LHESource %s is set to be kept for dataset %s" % (LHESourceName , dsName)
+            process.out.outputCommands.append("keep %s" % (LHESourceName) ) #*_source_*_LHEFile")
+        else :
+            print "for TH sample of %s, no LHESource is found to be kept" % (dsName)
         if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
             process.rivetProducerHTXS.ProductionMode = "TH"
-        process.flashggPDFWeightObject.LHEEventTag = "source"
-        process.flashggPDFWeightObject.LHERunLabel = "source"
+#        process.flashggPDFWeightObject.LHEEventTag = "source"
+#        process.flashggPDFWeightObject.LHERunLabel = "source"
         process.flashggPDFWeightObject.isStandardSample = False
         process.flashggPDFWeightObject.isThqSample = True
         

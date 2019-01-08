@@ -1,6 +1,6 @@
 from optpars_utils import *
 
-from das_client import get_data as das_query
+from Utilities.General.cmssw_das_client import get_data as das_query
 
 from pprint import pprint
 
@@ -133,7 +133,8 @@ class SamplesManager(object):
             if "*" in dataset:
                 # response = das_query("https://cmsweb.cern.ch","dataset dataset=%s | grep dataset.name" % dataset, 0, 0, False, self.dbs_instance_, ckey=x509(), cert=x509())
                 # response = das_query("https://cmsweb.cern.ch","dataset dataset=%s instance=%s | grep dataset.name" % (dataset, self.dbs_instance_), 0, 0, False, ckey=x509(), cert=x509())
-                response = das_query("https://cmsweb.cern.ch","dataset dataset=%s instance=%s | grep dataset.name" % (dataset, self.dbs_instance_), 0, 0, False, ckey=x509(), cert=x509())
+                # response = das_query("https://cmsweb.cern.ch","dataset dataset=%s instance=%s | grep dataset.name" % (dataset, self.dbs_instance_), 0, 0, False, ckey=x509(), cert=x509())
+                response = das_query("dataset dataset=%s instance=%s | grep dataset.name" % (dataset, self.dbs_instance_))
                 ## print response
                 for d in response["data"]:
                     ## print d
@@ -159,7 +160,8 @@ class SamplesManager(object):
         @dsetName: dataset name
         """
         ## response = das_query("https://cmsweb.cern.ch","file dataset=%s | grep file.name,file.nevents" % dsetName, 0, 0, False, self.dbs_instance_, ckey=x509(), cert=x509())
-        response = das_query("https://cmsweb.cern.ch","file dataset=%s instance=%s | grep file.name,file.nevents" % (dsetName,self.dbs_instance_), 0, 0, False, ckey=x509(), cert=x509())
+        ## response = das_query("https://cmsweb.cern.ch","file dataset=%s instance=%s | grep file.name,file.nevents" % (dsetName,self.dbs_instance_), 0, 0, False, ckey=x509(), cert=x509())
+        response = das_query("file dataset=%s instance=%s | grep file.name,file.nevents" % (dsetName,self.dbs_instance_))
         
         files=[]
         for d in response["data"]:
@@ -498,6 +500,17 @@ class SamplesManager(object):
         Check if file is valid.
         @fileName: file name
         """
+
+        weights_to_load = ""
+        LHE_Branch_Name = ""
+        #print dsetName.split('/')[1]
+        if dsetName.split('/')[1] in self.cross_sections_:
+            xsec = self.cross_sections_[ dsetName.split('/')[1] ]
+            if "weights" in xsec :
+                weights_to_load = xsec["weights"]
+                LHE_Branch_Name = xsec["LHESourceName"]
+            #print "following weights will be loaded" , weights_to_load
+
         fName = fileName
         tmp = ".tmp%s_%d.json"%(sha256(dsetName).hexdigest(),ifile)
         if self.continue_:
@@ -512,10 +525,10 @@ class SamplesManager(object):
         if self.just_open_:
             ret,out = self.parallel_.run("fggOpenFile.py",[fName,tmp,dsetName,str(ifile)],interactive=True)[2]
         elif self.queue_:
-            self.parallel_.run("fggCheckFile.py",[fName,tmp,dsetName,str(ifile)],interactive=False)
+            self.parallel_.run("fggCheckFile.py",[fName,tmp,dsetName,str(ifile),weights_to_load,LHE_Branch_Name],interactive=False)
             return
         else:
-            ret,out = self.parallel_.run("fggCheckFile.py",[fName,tmp,dsetName,str(ifile)],interactive=True)[2]
+            ret,out = self.parallel_.run("fggCheckFile.py",[fName,tmp,dsetName,str(ifile),weights_to_load,LHE_Branch_Name],interactive=True)[2]
 
         if ret != 0:
             print "ERROR checking %s" % fName
@@ -797,7 +810,7 @@ class SamplesManager(object):
             self.writeCatalogFile( ifile, part )
             
 
-    def getDatasetMetaData(self,maxEvents,primary,secondary=None,jobId=-1,nJobs=0):
+    def getDatasetMetaData(self,maxEvents,primary,secondary=None,jobId=-1,nJobs=0,weightName=None):
         """
         Extract dataset meta data.
         @maxEvents: maximum number of events to read.
@@ -828,12 +841,21 @@ class SamplesManager(object):
                 found = dataset
                 if prim in self.cross_sections_:
                     xsec = self.cross_sections_[prim]
+                if "weights" in xsec and weightName:
+                    if weightName not in xsec["weights"].split(","):
+                        print weightName, " is not available in ", primary 
+                        weightName = None
+                else :
+                    weightName = None
                 for fil in info["files"]:
                     if fil.get("bad",False):
                         continue
                     nev, name = fil["nevents"], fil["name"]
                     totEvents += nev
-                    totWeights += fil.get("weights",0.)
+                    if weightName :
+                        totWeights += fil.get(weightName,0.)
+                    else:
+                        totWeights += fil.get("weights",0.)
                     allFiles.append(name)
                     if maxEvents > -1 and totEvents > maxEvents:
                         break
@@ -938,6 +960,11 @@ Commands:
                             default=20,
                             help="Maximum number of threads to use. default: %default",
                             ),
+                make_option("-S","--Dataset",
+                            dest="dataset",action="store",type="string",
+                            default=None,
+                            help="",
+                            ),
                 make_option("-v","--verbose",
                             action="store_true", dest="verbose",
                             default=False,
@@ -972,9 +999,9 @@ Commands:
             method()
             
     def run_import(self,*args):
-        if len(args)>0:
-            print args
-            self.mn.importFromDAS(list(args))
+        if self.options.dataset :
+            print self.options.dataset
+            self.mn.importFromDAS([self.options.dataset])
         else:
             self.mn.importFromDAS(["/*/*%s-%s*/USER" % (self.options.campaign,self.options.flashggVersion)])
     
